@@ -76,7 +76,7 @@ class NalogAPI():
         s.mount('http://', requests.adapters.HTTPAdapter(max_retries=retries))
         url = self.apiUrl + '/auth/lkfl'
         try:
-            r = s.post(url, data=json.dumps(payload), headers=headers, timeout=5)
+            r = s.post(url, data=json.dumps(payload), headers=headers, timeout=15)
         except requests.ConnectionError:
             raise AuthenticationError("Can't connect to authentication server")
         res = r.json()
@@ -118,7 +118,7 @@ class NalogAPI():
         s.mount('http://', requests.adapters.HTTPAdapter(max_retries=retries))
         url = self.apiUrl + '/auth/token'
         try:
-            r = s.post(url, data=json.dumps(payload), headers=headers, timeout=5)
+            r = s.post(url, data=json.dumps(payload), headers=headers, timeout=15)
         except requests.ConnectionError:
             raise Exception("Failed to fetch token")
         res = r.json()
@@ -145,12 +145,12 @@ class NalogAPI():
         r = None
         if post:
             try:
-                r = s.post(url, data=json.dumps(payload), headers=headers, timeout=5)
+                r = s.post(url, data=json.dumps(payload), headers=headers, timeout=15)
             except requests.ConnectionError:
                 raise Exception("Failed to call")
         else:
             try:
-                r = s.get(url, headers=headers, timeout=5)
+                r = s.get(url, headers=headers, timeout=15)
             except requests.ConnectionError:
                 raise Exception("Failed to call")
         res = r.json()
