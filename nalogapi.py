@@ -49,7 +49,7 @@ class NalogAPI():
 
     @staticmethod
     def getTimeString(dt):
-        return dt.isoformat()
+        return dt.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
     def auth(self, login, password):
         headers = {
@@ -168,7 +168,7 @@ class NalogAPI():
                 'incomeType': 'FROM_INDIVIDUAL',
                 'inn': None
             },
-            'requestTime': self.getTimeString(date),
+            'requestTime': self.getTimeString(datetime.utcnow()),
             'operationTime': self.getTimeString(date.astimezone(timezone.utc) if date.tzinfo else date),
             'services': [{
             'name': name, # 'Предоставление информационных услуг #970/2495',
