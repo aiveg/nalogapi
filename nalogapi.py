@@ -169,7 +169,7 @@ class NalogAPI():
                 'inn': None
             },
             'requestTime': self.getTimeString(datetime.utcnow()),
-            'operationTime': self.getTimeString(date),
+            'operationTime': self.getTimeString(date.astimezone(timezone.utc) if date.tzinfo else date),
             'services': [{
             'name': name, # 'Предоставление информационных услуг #970/2495',
             'amount': str(amount),
