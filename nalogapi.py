@@ -159,10 +159,6 @@ class NalogAPI():
     @classmethod
     def addIncome(cls, date, amount, name):
         self = cls()
-        
-        # ИСПРАВЛЕНИЕ: Конвертируем московское время в UTC для обоих полей
-        date_utc = date.astimezone(timezone.utc) if date.tzinfo else date
-        
         payload = {
             'paymentType': 'CASH',
             'ignoreMaxTotalIncomeRestriction': False,
@@ -172,22 +168,18 @@ class NalogAPI():
                 'incomeType': 'FROM_INDIVIDUAL',
                 'inn': None
             },
-            'requestTime': self.getTimeString(date_utc),    # ← Изменено: используем date_utc
-            'operationTime': self.getTimeString(date_utc),  # ← Изменено: используем date_utc
+            'requestTime': self.getTimeString(datetime.utcnow()),
+            'operationTime': self.getTimeString(date.astimezone(timezone.utc) if date.tzinfo else date),
             'services': [{
-                'name': name,
-                'amount': str(amount),
-                'quantity': 1
+            'name': name, # 'Предоставление информационных услуг #970/2495',
+            'amount': str(amount),
+            'quantity': 1
             }],
             'totalAmount': str(amount)
         }
         res = self.call('income', payload)
-        
-        # ИСПРАВЛЕНИЕ: Выбрасываем исключение вместо return {'error': ...}
-        if not res or 'approvedReceiptUuid' not in res:
-            error_msg = res.get('message', str(res)) if isinstance(res, dict) else str(res)
-            raise Exception(f"НПД API error: {error_msg}")
-        
+        if not res or not 'approvedReceiptUuid' in res:
+            return {'error': res}
         return "{}/receipt/{}/{}/print".format(self.apiUrl, self.inn, res['approvedReceiptUuid'])
 
     @classmethod
